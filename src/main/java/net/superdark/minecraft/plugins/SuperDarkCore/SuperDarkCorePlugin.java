@@ -92,7 +92,7 @@ public class SuperDarkCorePlugin extends JavaPlugin
     public void registerCommands(String packageLocation, JavaPlugin plugin)
     {
         // Register all commands now
-        CommandReflection.RegisterCommands(this, "net.superdark.minecraft.plugins.SuperDarkCore.commands");
+        CommandReflection.RegisterCommands(plugin, packageLocation);
     }
 
     /**

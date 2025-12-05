@@ -8,6 +8,7 @@ import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -31,14 +32,15 @@ public class CommandReflection
 
         // This allows other packages to be scanned outside the current JAR. Previously this was not the case,
         // and we ran into some issues where we couldn't register commands using this functionality.
-        var configBuilder = new ConfigurationBuilder();
-        configBuilder.addClassLoaders(classLoader);
-        configBuilder.setUrls(ClasspathHelper.forPackage(packageLocation, classLoader));
-        configBuilder.setScanners(Scanners.MethodsAnnotated);
+        ConfigurationBuilder config = new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forPackage(packageLocation, classLoader))
+                .addClassLoaders(classLoader)
+                .setScanners(Scanners.TypesAnnotated, Scanners.SubTypes)
+                .filterInputsBy(new FilterBuilder().includePackage(packageLocation));
 
-
-        Reflections reflections = new Reflections(configBuilder);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Command.class);
+        Reflections reflections = new Reflections(config);
+        Set<Class<?>> classes = reflections.get(
+                Scanners.TypesAnnotated.with(Command.class).asClass(classLoader));
 
         for(Class<?> c : classes)
         {
@@ -203,5 +205,25 @@ public class CommandReflection
         }
 
         return result;
+    }
+
+    public static void DebugListAllCommandsInJar(JavaPlugin plugin, String pluginLocation)
+    {
+        var classLoader = plugin.getClass().getClassLoader();
+
+        ConfigurationBuilder config = new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forPackage(pluginLocation, classLoader))
+                .addClassLoaders(classLoader)
+                .setScanners(Scanners.TypesAnnotated, Scanners.SubTypes);
+
+        Reflections reflections = new Reflections(config);
+        Set<Class<?>> commandClasses = reflections.get(
+                Scanners.TypesAnnotated.with(Command.class).asClass());
+
+        for (var type : commandClasses)
+        {
+            plugin.getLogger().info("Found class: " + type);
+        }
+
     }
 }
