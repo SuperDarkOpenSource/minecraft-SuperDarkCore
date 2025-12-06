@@ -206,24 +206,4 @@ public class CommandReflection
 
         return result;
     }
-
-    public static void DebugListAllCommandsInJar(JavaPlugin plugin, String pluginLocation)
-    {
-        var classLoader = plugin.getClass().getClassLoader();
-
-        ConfigurationBuilder config = new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(pluginLocation, classLoader))
-                .addClassLoaders(classLoader)
-                .setScanners(Scanners.TypesAnnotated, Scanners.SubTypes);
-
-        Reflections reflections = new Reflections(config);
-        Set<Class<?>> commandClasses = reflections.get(
-                Scanners.TypesAnnotated.with(Command.class).asClass());
-
-        for (var type : commandClasses)
-        {
-            plugin.getLogger().info("Found class: " + type);
-        }
-
-    }
 }
