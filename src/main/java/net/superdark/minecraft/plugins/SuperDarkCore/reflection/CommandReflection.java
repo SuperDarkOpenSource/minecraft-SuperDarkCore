@@ -5,6 +5,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -24,8 +28,19 @@ public class CommandReflection
      */
     public static void RegisterCommands(JavaPlugin plugin, String packageLocation)
     {
-        Reflections reflections = new Reflections(packageLocation);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Command.class);
+        var classLoader = plugin.getClass().getClassLoader();
+
+        // This allows other packages to be scanned outside the current JAR. Previously this was not the case,
+        // and we ran into some issues where we couldn't register commands using this functionality.
+        ConfigurationBuilder config = new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forPackage(packageLocation, classLoader))
+                .addClassLoaders(classLoader)
+                .setScanners(Scanners.TypesAnnotated, Scanners.SubTypes)
+                .filterInputsBy(new FilterBuilder().includePackage(packageLocation));
+
+        Reflections reflections = new Reflections(config);
+        Set<Class<?>> classes = reflections.get(
+                Scanners.TypesAnnotated.with(Command.class).asClass(classLoader));
 
         for(Class<?> c : classes)
         {
@@ -75,7 +90,7 @@ public class CommandReflection
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                plugin.getLogger().severe(e.getMessage());
             }
         }
     }

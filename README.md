@@ -3,7 +3,7 @@ A graceful core plugin
 ## Overview
 SuperDark shared code across plugins. This core plugin provides services for general use a long with child plugin tracking.
 ## License
-GPL3. All Rights Reserved. Copyright (C) Russell Johnson and Casey johnson 2021.
+GPL3. All Rights Reserved. Copyright (C) Russell Johnson and Casey johnson 2025.
 ## Getting Started
 This core plugin is going to be easy to use. First, you will not need to extend the default Spigot JavaPlugin.
 In your main class, extend our abstract class BaseSuperDarkPlugin, and provide a  plugin name as a
