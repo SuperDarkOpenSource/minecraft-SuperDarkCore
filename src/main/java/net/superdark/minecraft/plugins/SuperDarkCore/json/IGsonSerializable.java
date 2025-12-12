@@ -16,6 +16,12 @@ import java.util.stream.Stream;
 
 public interface IGsonSerializable
 {
+    /**
+     * Saves an object to disk.
+     * @param plugin Current Java Plugin context to save under
+     * @param fileName the name of the file
+     * @param extraPaths any subpaths to save under the plugin context's data folder.
+     */
     default void saveToDisk(JavaPlugin plugin, String fileName, String... extraPaths)
     {
         var gson = new GsonBuilder()
@@ -43,10 +49,11 @@ public interface IGsonSerializable
     }
 
     /**
-     *
+     * Reads a specific file from disk located at the referenced plugin's data folder.
      * @param plugin Reference to the plugin. Used for getting the data folder path and logging.
      * @param fileName the name of the file stupid
      * @param clazz Class for type information
+     * @param extraPaths any subpaths to save under the plugin context's data folder.
      * @return An object of type T, which will hold data loaded from disk. Throws an exception if not read correctly.
      * @param <T> Data Type.
      */
@@ -60,6 +67,15 @@ public interface IGsonSerializable
         return out;
     }
 
+    /**
+     * Reads ALL files given in the referenced plugin data folder + sub paths provided.
+     * @param plugin Referenced java plugin
+     * @param clazz Class to deserialize to
+     * @param extraPaths Sub data folder paths to read from
+     * @return A list of files deserialized to object T located in the given directory. An empty list otherwise.
+     * @param <T> Data type T, where T should be de-serializeable from Gson json.
+     * @throws IOException Exception from walking through given directories.
+     */
     static <T> List<T> readFromDisk(JavaPlugin plugin, Class<T> clazz, String... extraPaths) throws IOException
     {
         Gson gson = new Gson();
