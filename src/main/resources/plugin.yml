@@ -1,5 +1,5 @@
 name: SuperDarkCore
-version: 0.5.0
+version: '{$version}'
 description: Shared code between all SuperDark plugins
 api-version: 1.21
 

@@ -1,5 +1,6 @@
 package net.superdark.minecraft.plugins.SuperDarkCore;
 
+import net.superdark.minecraft.plugins.SuperDarkCore.gui.GuiManager;
 import net.superdark.minecraft.plugins.SuperDarkCore.json.SpigotGson;
 import net.superdark.minecraft.plugins.SuperDarkCore.reflection.CommandReflection;
 import net.superdark.minecraft.plugins.SuperDarkCore.registration.BaseSuperDarkPlugin;
@@ -57,6 +58,7 @@ public class SuperDarkCorePlugin extends JavaPlugin
         dataTrackerAPI_ = new DataTrackerService(this);
         webhookService_ = new WebhookService(this);
         JsonService_ = new SpigotGson();
+        guiManager_ = new GuiManager(this);
     }
 
     private void destroyAPIs()
@@ -110,6 +112,11 @@ public class SuperDarkCorePlugin extends JavaPlugin
         return instance_;
     }
 
+    public GuiManager getGuiManager()
+    {
+        return guiManager_;
+    }
+
     public PlayerService getPlayerService()
     {
         return playerService_;
@@ -160,4 +167,8 @@ public class SuperDarkCorePlugin extends JavaPlugin
     private WebhookService webhookService_;
 
     private SpigotGson JsonService_;
+
+    private GuiManager guiManager_;
+
+
 }

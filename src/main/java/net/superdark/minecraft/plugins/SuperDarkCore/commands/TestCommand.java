@@ -1,5 +1,7 @@
 package net.superdark.minecraft.plugins.SuperDarkCore.commands;
 
+import net.superdark.minecraft.plugins.SuperDarkCore.SuperDarkCorePlugin;
+import net.superdark.minecraft.plugins.SuperDarkCore.gui.ConfirmationInventoryGui;
 import net.superdark.minecraft.plugins.SuperDarkCore.reflection.CommandHandler;
 import net.superdark.minecraft.plugins.SuperDarkCore.reflection.Command;
 import net.superdark.minecraft.plugins.SuperDarkCore.reflection.CommandPermissionLevel;
@@ -41,5 +43,20 @@ public class TestCommand
         }
         if (!(sender instanceof Player player)) return;
         TeleportService.TeleportTypes.SafeTeleportAboveGround(player.getWorld(), player, 100.0, 100.0);
+    }
+
+    @CommandHandler (Path = "inventory")
+    public static void InventoryTest(CommandSender sender)
+    {
+        ConfirmationInventoryGui inventory = new ConfirmationInventoryGui(
+                () -> sender.sendMessage("Confirm fired successfully"),
+                () -> sender.sendMessage("Cancel Fired Successfully")
+        );
+
+        if(sender instanceof Player player)
+        {
+            SuperDarkCorePlugin.getInstance().getGuiManager().RegisterInventory(inventory.getInventory(), inventory);
+            player.openInventory(inventory.getInventory());
+        }
     }
 }

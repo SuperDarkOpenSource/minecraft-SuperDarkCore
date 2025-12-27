@@ -27,7 +27,7 @@ public interface IGsonSerializable
         var gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .excludeFieldsWithoutExposeAnnotation()
-                .registerTypeAdapter(ItemStack.class, new ItemStackAdapter())
+                .registerTypeHierarchyAdapter(ItemStack.class, new ItemStackAdapter())
                 .create();
 
         try{
@@ -60,7 +60,15 @@ public interface IGsonSerializable
     static <T> T readFromDisk(JavaPlugin plugin, String fileName, Class<T> clazz, String... extraPaths) throws IOException {
         Gson gson = new Gson();
         T out = null;
-        var dataFile = Path.of(plugin.getDataFolder().getAbsolutePath(), extraPaths).resolve(fileName);
+        var where = Path.of(plugin.getDataFolder().getAbsolutePath(), extraPaths);
+
+        if(!where.toFile().exists())
+        {
+            Files.createDirectories(where);
+            return out;
+        }
+
+        var dataFile = where.resolve(fileName);
         var jsonString = Files.readString(dataFile);
         out = gson.fromJson(jsonString, clazz);
         plugin.getLogger().info("Loaded file " + fileName + " from disk.");
@@ -78,15 +86,23 @@ public interface IGsonSerializable
      */
     static <T> List<T> readFromDisk(JavaPlugin plugin, Class<T> clazz, String... extraPaths) throws IOException
     {
-        Gson gson = new Gson();
+        var gson = new GsonBuilder()
+                .registerTypeHierarchyAdapter(ItemStack.class, new ItemStackAdapter())
+                .create();
+
         var out = new ArrayList<T>();
         var where = Path.of(plugin.getDataFolder().getAbsolutePath(), extraPaths);
+
+        if(!where.toFile().exists())
+        {
+            Files.createDirectories(where);
+            return new ArrayList<>();
+        }
 
         // suppress the stupid warning, doesn't take into account throwing the exception up the stack
         @SuppressWarnings("resource")
         var files = Files.walk(where)
                 .filter(Files::isRegularFile)
-                .filter(path -> path.endsWith(".json"))
                 .toList();
 
         for (var file : files)
