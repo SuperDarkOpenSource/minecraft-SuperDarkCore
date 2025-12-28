@@ -20,7 +20,7 @@ public class PlayerService
      */
     public void registerPlayer (String player, UUID uuid)
     {
-        onlineUserNameMap.put(player.toLowerCase(Locale.ROOT), uuid);
+        onlineUserNameMap.put(player, uuid);
         if (isAdmin(player))
         {
             registerAdmin(this.superDarkCorePlugin_.getServer().getPlayer(player));
@@ -33,11 +33,9 @@ public class PlayerService
      */
     public void unregisterPlayer (String p)
     {
-        if (onlineUserNameMap.get(p) != null) {
-            onlineUserNameMap.remove(p);
-        }
+        var uuid = onlineUserNameMap.remove(p);
 
-        Player player = superDarkCorePlugin_.getServer().getPlayer(onlineUserNameMap.get(p));
+        Player player = superDarkCorePlugin_.getServer().getPlayer(uuid);
         if (adminPlayerObjectList.contains(player))
         {
             unregisterAdmin(player);
@@ -79,7 +77,7 @@ public class PlayerService
      */
     public boolean isAdmin(String s)
     {
-        Player player = superDarkCorePlugin_.getServer().getPlayer(onlineUserNameMap.get(s.toLowerCase(Locale.ROOT)));
+        Player player = superDarkCorePlugin_.getServer().getPlayer(onlineUserNameMap.get(s));
         if(player == null) return false; // Player does not exist on the server currently, return false.
         return isAdmin(player);
     }

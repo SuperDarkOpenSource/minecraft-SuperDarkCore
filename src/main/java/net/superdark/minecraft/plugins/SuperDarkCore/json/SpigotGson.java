@@ -4,15 +4,16 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import net.superdark.minecraft.plugins.SuperDarkCore.SuperDarkCorePlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-public class Json
+public class SpigotGson
 {
-    public Json()
+    public SpigotGson()
     {
 
     }
